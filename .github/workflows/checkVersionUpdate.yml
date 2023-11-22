@@ -33,7 +33,7 @@ jobs:
   compareVersions:
     runs-on: ubuntu-latest
     needs: [ getCandidateVersion, getLatestVersion ]
-    if: ${{ needs.getLatestVersion.outputs.version !== null }}
+    if: ${{ needs.getLatestVersion.outputs.version != null }}
     steps:
       - uses: madhead/semver-utils@latest
         id: compareSemver
