@@ -25,6 +25,7 @@ jobs:
       - name: Get latest release
         id: latestRelease
         uses: pozetroninc/github-action-get-latest-release@master
+        continue-on-error: true
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
@@ -32,6 +33,7 @@ jobs:
   compareVersions:
     runs-on: ubuntu-latest
     needs: [ getCandidateVersion, getLatestVersion ]
+    if: ${{ needs.getLatestVersion.outputs.version !== null }}
     steps:
       - uses: madhead/semver-utils@latest
         id: compareSemver
