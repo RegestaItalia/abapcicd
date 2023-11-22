@@ -1,0 +1,25 @@
+name: Distribute release
+on:
+  release:
+    types: [ published ]
+jobs:
+  trmInstall:
+    name: TRM Publish
+    runs-on: [ self-hosted, PC-REG252 ]
+    strategy:
+      matrix:
+        target: ${{ fromJson(vars.TARGET_SYSTEMS) }}
+    steps:
+      - name: Install from public registry
+        uses: RegestaItalia/trm-action-install@main
+        with:
+          systemDest: ${{ matrix.target }}
+          systemAsHost: ${{ secrets[format('{0}_ASHOST', matrix.target)] }}
+          systemSysNr: ${{ secrets[format('{0}_SYSNR', matrix.target)] }}
+          systemClient: ${{ secrets[format('{0}_CLIENT', matrix.target)] }}
+          systemLang: ${{ secrets[format('{0}_LANG', matrix.target)] }}
+          systemUser: ${{ secrets[format('{0}_USER', matrix.target)] }}
+          systemPassword: ${{ secrets[format('{0}_PASSWORD', matrix.target)] }}
+          packageName: ${{ github.event.repository.name }}
+          packageVersion: ${{ github.event..release.tag_name }}
+          keepOriginalPackages: true

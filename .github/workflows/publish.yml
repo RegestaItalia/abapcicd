@@ -1,0 +1,52 @@
+name: Publish release
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/*'
+jobs:
+  getVersion:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.abapVersion.outputs.version }}
+    steps:
+      - name: Get current repository version value
+        uses: RegestaItalia/abapVersion@main
+        id: abapVersion
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+  trmPublish:
+    name: TRM Publish
+    runs-on: [self-hosted, PC-REG252]
+    needs: [ getVersion ],
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: repo
+      - name: Publish to public registry
+        uses: RegestaItalia/trm-action-publish@main
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          registryAuth: ${{ secrets.TRM_REGISTRY_AUTH }}
+          systemDest: ${{ vars.SOURCE_SYSTEM }}
+          systemAsHost: ${{ secrets[format('{0}_ASHOST', vars.SOURCE_SYSTEM)] }}
+          systemSysNr: ${{ secrets[format('{0}_SYSNR', vars.SOURCE_SYSTEM)] }}
+          systemClient: ${{ secrets[format('{0}_CLIENT', vars.SOURCE_SYSTEM)] }}
+          systemLang: ${{ secrets[format('{0}_LANG', vars.SOURCE_SYSTEM)] }}
+          systemUser: ${{ secrets[format('{0}_USER', vars.SOURCE_SYSTEM)] }}
+          systemPassword: ${{ secrets[format('{0}_PASSWORD', vars.SOURCE_SYSTEM)] }}
+          packageVersion: ${{ needs.getVersion.outputs.version }}
+          devclass: ${{ vars.SOURCE_DEVCLASS }}
+          target: ${{ vars.SOURCE_TARGET }}
+          readme: ./repo/README.md
+  createRelease:
+    name: Create release
+    runs-on: ubuntu-latest
+    needs: [ trmPublish ]
+    steps:
+      - uses: ncipollo/release-action@v1
+        with:
+          makeLatest: true
+          tag: ${{ needs.getVersion.outputs.version }}

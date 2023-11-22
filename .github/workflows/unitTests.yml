@@ -1,0 +1,20 @@
+name: ABAP Unit Test
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'src/*'
+jobs:
+  unitTest:
+    name: Run ABAP unit tests
+    runs-on: [self-hosted, PC-REG252]
+    steps:
+      - name: Execute ADASH
+        shell: cmd
+        env:
+          ADASH_USERNAME: ${{ secrets[format('{0}_USER', vars.SOURCE_SYSTEM)] }}
+          ADASH_PASSWORD: ${{ secrets[format('{0}_PASSWORD', vars.SOURCE_SYSTEM)] }}
+          ADASH_HOST: ${{ secrets[format('{0}_ASHOST', vars.SOURCE_SYSTEM)] }}
+          ADASH_CLIENT: ${{ secrets[format('{0}_CLIENT', vars.SOURCE_SYSTEM)] }}
+        run: adash testp ${{ vars.SOURCE_DEVCLASS }} -i
