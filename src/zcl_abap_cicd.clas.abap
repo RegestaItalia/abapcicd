@@ -23,7 +23,7 @@ CLASS zcl_abap_cicd IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_sum.
-    rv_result = iv_value1 + iv_value2. " abapLint will tell us something is wrong with this line (space_before_dot)
+    rv_result = iv_value1 + iv_value2 . " abapLint will tell us something is wrong with this line (space_before_dot)
   ENDMETHOD.
 
 ENDCLASS.
