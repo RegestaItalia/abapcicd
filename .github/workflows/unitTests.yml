@@ -15,6 +15,6 @@ jobs:
         env:
           ADASH_USERNAME: ${{ secrets[format('{0}_USER', vars.SOURCE_SYSTEM)] }}
           ADASH_PASSWORD: ${{ secrets[format('{0}_PASSWORD', vars.SOURCE_SYSTEM)] }}
-          ADASH_HOST: ${{ secrets[format('{0}_ASHOST', vars.SOURCE_SYSTEM)] }}
+          ADASH_HOST: ${{ secrets[format('{0}_ASHOST', vars.SOURCE_SYSTEM)] }}:${{ secrets[format('{0}_PORT', vars.SOURCE_SYSTEM)] }}
           ADASH_CLIENT: ${{ secrets[format('{0}_CLIENT', vars.SOURCE_SYSTEM)] }}
         run: adash testp ${{ vars.SOURCE_DEVCLASS }} -i
