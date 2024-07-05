@@ -20,7 +20,7 @@ CLASS lcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals( msg = 'Error in result 1 + 1'
                                         exp = m_cut->sum( iv_val1 = 1
                                                           iv_val2 = 1 )
-                                        act = 1 ). " ADASH will tell us this unit test is broken
+                                        act = 2 ).
   ENDMETHOD.
 
 ENDCLASS.
