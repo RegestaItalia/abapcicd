@@ -1,0 +1,30 @@
+name: ABAP Unit tests (ADASH)
+on:
+  push:
+    branches-ignore:
+      - 'main'
+jobs:
+  runUnitTests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            src:
+              - 'src/**'
+      - name: Install ADASH
+        if: ${{ steps.changes.outputs.src == 'true' }}
+        run: npm install adash-cli -g
+      - name: Get system address
+        if: ${{ steps.changes.outputs.src == 'true' }}
+        id: getSystemAddress
+        uses: simonegaffurini/nuveplatform-get-instance@main
+        with:
+          email: ${{ secrets.NUVE_EMAIL }}
+          password: ${{ secrets.NUVE_PASSWORD }}
+          instanceName: ${{ vars.NUVE_INSTANCE_NAME }}
+      - name: Run ABAP Unit tests
+        if: ${{ steps.changes.outputs.src == 'true' }}
+        run:  adash testp ${{ vars.DEVCLASS }} -u ${{ secrets.A4H_USER }} -p ${{ secrets.A4H_PASSWORD }} -h ${{ steps.getSystemAddress.outputs.webDomain }} -c 001 -i

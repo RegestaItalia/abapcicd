@@ -1,0 +1,52 @@
+name: Create TRM release
+on:
+  release:
+    types: [published]
+jobs:
+  createTrmRelease:
+    runs-on: [self-hosted, Windows, RegRunner]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Get system address
+        id: getSystemAddress
+        uses: simonegaffurini/nuveplatform-get-instance@main
+        with:
+          email: ${{ secrets.NUVE_EMAIL }}
+          password: ${{ secrets.NUVE_PASSWORD }}
+          instanceName: ${{ vars.NUVE_INSTANCE_NAME }}
+      - name: TRM Publish
+        uses: RegestaItalia/trm-action-publish@2.1.3
+        with:
+          dest: A4H
+          systemAsHost: ${{ steps.getSystemAddress.outputs.externalIp }}
+          systemSysnr: '00'
+          systemClient: '001'
+          systemUser: ${{ secrets.A4H_USER }}
+          systemPassword: ${{ secrets.A4H_PASSWORD }}
+          systemLang: EN
+          devclass: ${{ vars.DEVCLASS }}
+          target: TRM
+          registryAuth: ${{ secrets.TRM_REGISTRY_AUTH }}
+          packageName: abapcicd
+          description: Example of ABAP CI/CD on S4/ECC
+          private: false
+          git: https://github.com/RegestaItalia/abapcicd.git
+          website: https://www.trmregistry.com/
+          license: MIT
+          authors: Simone Gaffurini <gaffu@trmregistry.com>
+          keywords: example, cicd
+          readme: /README.md
+      - name: Stop SAP instance
+        uses: simonegaffurini/nuveplatform-stop-instance@main
+        with:
+          email: ${{ secrets.NUVE_EMAIL }}
+          password: ${{ secrets.NUVE_PASSWORD }}
+          instanceName: ${{ vars.NUVE_INSTANCE_NAME }}
+  runDistributeReleaseWkf:
+    name: Run distribute release workflow
+    needs: [createTrmRelease]
+    uses: ./.github/workflows/distributeTrmRelease.yml
+    with:
+      packageVersion: ${{ github.event.release.tag_name }}
+    secrets: inherit

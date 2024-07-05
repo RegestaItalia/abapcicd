@@ -1,0 +1,39 @@
+name: Distribute TRM release
+on:
+  workflow_call:
+    inputs:
+      packageVersion:
+        required: true
+        type: string
+jobs:
+  installTrmRelease:
+    runs-on: [self-hosted, Windows, RegRunner]
+    steps:
+      - name: Start new instance
+        id: targetInstance
+        uses: simonegaffurini/nuveplatform-start-backup@main
+        with:
+          email: ${{ secrets.NUVE_EMAIL }}
+          password: ${{ secrets.NUVE_PASSWORD }}
+          backup: ${{ vars.NUVE_NEW_INSTANCE_BACKUP_NAME }}
+          instanceName: ${{ vars.NUVE_NEW_INSTANCE_NAME }}
+          instanceProject: trm-samples
+      - name: TRM Install
+        uses: RegestaItalia/trm-action-install@2.0.1
+        with:
+          dest: A4H
+          systemAsHost: ${{ steps.targetInstance.outputs.externalIp }}
+          systemSysnr: '00'
+          systemClient: '001'
+          systemUser: ${{ secrets.A4H_USER }}
+          systemPassword: ${{ secrets.A4H_PASSWORD }}
+          systemLang: EN
+          packageName: abapcicd
+          packageVersion: ${{ inputs.packageVersion }}
+          registryAuth: ${{ secrets.TRM_REGISTRY_AUTH }}
+      - name: Stop SAP instance
+        uses: simonegaffurini/nuveplatform-stop-instance@main
+        with:
+          email: ${{ secrets.NUVE_EMAIL }}
+          password: ${{ secrets.NUVE_PASSWORD }}
+          instanceName: ${{ vars.NUVE_NEW_INSTANCE_NAME }}
