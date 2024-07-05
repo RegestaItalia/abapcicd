@@ -19,9 +19,9 @@ jobs:
           instanceName: ${{ vars.NUVE_NEW_INSTANCE_NAME }}
           instanceProject: trm-samples
       - name: TRM Install
-        uses: RegestaItalia/trm-action-install@2.0.1
+        uses: RegestaItalia/trm-action-install@2.0.2
         with:
-          dest: A4H
+          systemDest: A4H
           systemAsHost: ${{ steps.targetInstance.outputs.externalIp }}
           systemSysnr: '00'
           systemClient: '001'

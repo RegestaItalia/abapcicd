@@ -16,9 +16,9 @@ jobs:
           password: ${{ secrets.NUVE_PASSWORD }}
           instanceName: ${{ vars.NUVE_INSTANCE_NAME }}
       - name: TRM Publish
-        uses: RegestaItalia/trm-action-publish@2.1.3
+        uses: RegestaItalia/trm-action-publish@2.1.4
         with:
-          dest: A4H
+          systemDest: A4H
           systemAsHost: ${{ steps.getSystemAddress.outputs.externalIp }}
           systemSysnr: '00'
           systemClient: '001'
