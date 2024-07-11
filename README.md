@@ -43,6 +43,8 @@ Releases are generated with [Github Releases](https://docs.github.com/en/reposit
 
 When a Github Release is created, the TRM publish workflow will trigger.
 
+The release can then be found on the registry here [https://trmregistry.com/#/package/abapcicd](https://trmregistry.com/#/package/abapcicd).
+
 # Distribute
 
 As soon as the TRM release is completed, the TRM install workflow is triggered.
